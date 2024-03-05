@@ -1,0 +1,30 @@
+name: 'Run a remote-script on a remote machine using SSH'
+description: 'Connects to a server via SSH runs a script on the target'
+inputs:
+  key-name:
+    description: 'Name of the file the private key is temporarily saved in. Defaults to `identity`.'
+    required: true
+    default: 'identity'
+  port:
+    description: 'The SSH port to use. Defaults to `22`.'
+    required: true
+    default: '22'
+  dir:
+    description: 'The directory that should be used on the target host. Thats where the script to start should reside.'
+    required: true
+  file:
+    description: 'The file that should be run.'
+    required: true
+  user:
+    description: 'The SSH user that will be used to connect to the host.'
+    required: true
+  host:
+    description: 'The SSH-server (host) to connect to.'
+    required: true
+  
+runs:
+  using: "composite"
+  steps:
+    - name: Use SSH - start script on target
+      shell: bash
+      run: ssh -i .ssh/${{ inputs.key-name }} -p ${{ inputs.port }} -o StrictHostKeyChecking=no ${{ inputs.user }}@${{ inputs.host }} "cd ${{ inputs.dir }} && ./${{ inputs.file }}"
